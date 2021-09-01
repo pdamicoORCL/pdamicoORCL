@@ -288,43 +288,16 @@ Refer to [**tsm user-identity-store**](https://help.tableau.com/current/server/e
 
 You have installed Tableau Server on Linux. In the next section, you will:  
 
-- Configure Tableau Server to connect to SQL Server  
 - "Lock" the Default Project (Best Practice)  
 - Import 2 groups of users, using the UI **and** the command line  
 - Assign permissions to Groups (Best Practice)  
+- Configure Tableau Server to connect to SQL Server  
 - Test Connectivity to SQL Server by creating a Workbook  
 
-# Install SQL Server Driver (Linux)  
+# Content Model: Do this First
 
-SQL Server is installed on **train-vm**. You have to install the SQL Server driver on the Tableau Server.  
+* Login as Server Administrator (admin / admin)  
 
-## Install UnixOdbc Driver
-
-  At a terminal, enter the following (**node2** is the sudo password):  
-
-  `sudo apt install unixodbc`
-
-## Install Tableau SQL Server Driver
-
-* Launch Web Browser (Chromium)  
-
-* Navigate to [**Driver Download**](https://www.tableau.com/support/drivers). Alternatively, google **tableau driver download** and click on the first link (**Driver Downlad - Tableau**)  
-
-* Scroll to **Microsoft SQL Server**  
-
-* Follow instructions under **On Debian and Ubuntu Linux distributions:**  
-
-* To install the driver, run the following command:  
-
-  `sudo dpkg -i /home/node2/Downloads/msodbcsql17_17.5.1.1-1_amd64.deb`  
-
-* Accept the License terms (Press **\<Tab\>** key to highlight **Yes**; press **Enter**)  
-
-# Initial Configuration
-
-## Content Model: Do this First
-
-* Login as Server Administrator (admin / admin)
 * Modify Permissions for Default Project. Remove ALL permissions from the **All Users** Group  
 
   1. Click **Explore**  
@@ -545,6 +518,32 @@ Reference: [**Tableau Server Help: Permissions**](https://help.tableau.com/curre
     * Can you see the **Sales** Project?
 
     * Can you see the **Finance** Project?
+
+    # Install SQL Server Driver (Linux)  
+
+    SQL Server is installed on **train-vm**. You have to install the SQL Server driver on the Tableau Server.  
+
+    ## Install UnixOdbc Driver
+
+      At a terminal, enter the following (**node2** is the sudo password):  
+
+      `sudo apt install unixodbc`
+
+    ## Install Tableau SQL Server Driver
+
+    * Launch Web Browser (Chromium)  
+
+    * Navigate to [**Driver Download**](https://www.tableau.com/support/drivers). Alternatively, google **tableau driver download** and click on the first link (**Driver Downlad - Tableau**)  
+
+    * Scroll to **Microsoft SQL Server**  
+
+    * Follow instructions under **On Debian and Ubuntu Linux distributions:**  
+
+    * To install the driver, run the following command:  
+
+      `sudo dpkg -i /home/node2/Downloads/msodbcsql17_17.5.1.1-1_amd64.deb`  
+
+    * Accept the License terms (Press **\<Tab\>** key to highlight **Yes**; press **Enter**)  
 
 # LDAP Browser
 
