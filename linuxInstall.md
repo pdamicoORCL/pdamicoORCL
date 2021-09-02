@@ -60,22 +60,22 @@ For a comprehensive guide to installing Tableau Server on Linux, refer to [**Ins
 
 # Launch Environment
 
-1. Press Power (Play) button above the two machines  
+* Press Power (Play) button above the two machines  
 
-1. Click on **Empty Ubuntu Image 30GB** to launch in your browser  
+* Click on **Empty Ubuntu Image 30GB** to launch in your browser  
 
-1. Wait. The VM may not be responsive at first; it can takes up to 2 minutes to load the VM.    
+* **Wait**. The VM may not be responsive at first; it can takes up to 2 minutes to load the VM.    
 
-1. Review Toolbar at top of screen.  *If you don't see the dock at the bottom of the screen, click the **Auto Fit** icon in the Skytap toolbar.*
+* **Review Toolbar at top of screen**.  *If you don't see the dock at the bottom of the screen, click the **Auto Fit** icon in the Skytap toolbar.*
 
-1. Open a Terminal window. There are several ways to do this:  
+* Open a Terminal window. There are several ways to do this:  
 
     - Click the **Terminal** icon on the dock at the bottom of the screen  
     - Right-click the Desktop. Click **Open Terminal Here**  
     - Press **\<Ctrl\> - \<Alt\> - t**  
 
 
-1. Enter the following at the prompt:  
+* Enter the following at the prompt:  
 
     `cd /home/node2/Desktop`
 
@@ -106,13 +106,15 @@ sudo apt-get -y install gdebi-core
 
 ## Install and Initialize TSM  
 
-Confirm once again that you are at the Desktop. Your prompt should look like this:  
+* Confirm once again that you are at the Desktop. Your prompt should look like this:  
 
-`node2@node2-vm:~/Desktop$`
+    `node2@node2-vm:~/Desktop$`
 
-Enter the following in a Terminal window.
+* If it doesn't look like this, change to the Desktop directory:  
 
-* Install Tableau Server package (1:30)  
+    `cd /home/node2/Desktop`
+
+* Install Tableau Server package (1:30). Enter the following in a Terminal window.  
 
     `sudo gdebi -n tableau-server-2021-1-0_amd64.deb`  
 
@@ -127,14 +129,13 @@ Enter the following in a Terminal window.
 
 * **Logout completely**. Click the menu in the upper-left of the screen, or the "whisker" menu at the bottom. In either case, when you see the menu, locate and click the **Power** icon, then click **Log Out**  
 
-* Login (password: **node2**)  
+* **Login** (password: **node2**)  
 
 ## Activate and Register Tableau Server  
 
 - Open Terminal Window  
 
 - Confirm once again that you are at the Desktop. Your prompt should look like this:  
-
 
     `node2@node2-vm:~/Desktop$`
 
@@ -146,11 +147,13 @@ Enter the following in a Terminal window.
 
     `tsm licenses activate -k <your_license_key>`  
 
-- **Optional**: review the registration JSON file. You use this file instead of entering the commands in a Web GUI. Remember: the goal of this tutorial is to perform an install **entirely** from the command line.  
+- **Optional**: review the registration JSON file. You use this file instead of entering the commands in a Web GUI. Remember: the goal of this tutorial is to perform an install **entirely** from the command line. Enter the following at the prompt (**cat** is the linux command equivalent to **type** on Windows):  
 
-- `cat register.json` (**cat** is the linux command equivalent to **type** on Windows)  
+    `cat register.json`
 
-- `tsm register --file register.json`  
+- Register  
+
+    `tsm register --file register.json`  
 
 # Configure LDAP
 
@@ -195,8 +198,6 @@ Press **\<space\>** to scroll. Press **q** to exit the command and return to a p
 * Three groups: Sales, Dev, HR
 * 5 users in each group: Sales01-Sales05, HR01-HR05, Finance01-Finance05
 * All passwords are **tableau** (except for admin)
-
-
 
 ## Configure LDAP Identity Store
 
