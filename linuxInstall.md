@@ -26,7 +26,7 @@ When finished, students will have:
 
 * A running Tableau Server with LDAP Identity Store / Local Authentication
 
-* Access to SQL Server: “Superstore World” and “DEV Superstore World”
+* Access to SQL Server: **Superstore World** and **DEV Superstore World**
 
 * Practice reading in groups from LDAP
 
@@ -43,7 +43,7 @@ For a comprehensive guide to installing Tableau Server on Linux, refer to [**Ins
 - Tableau Server (Hostname: **node2**)  
 
     * XUbuntu Desktop 18.04 LTS, 32GB RAM, 8 Cores, 80GB Disk
-    * uid/pw: **node2 / node2**
+    * user/password: **node2 / node2**
     * Tableau Server install (.deb) file on Desktop
     * **register.json**: JSON file for Registering Tableau Server via command line
     * **config.ldap.json**: JSON file to configure LDAP Identity Store (see below)
@@ -53,7 +53,7 @@ For a comprehensive guide to installing Tableau Server on Linux, refer to [**Ins
 - LDAP Server, SQL Server  (Hostname: **train-vm**)  
 
     * Ubuntu Desktop 20.04 LTS, 8GB RAM, 4 Cores, 50GB Disk
-    * uid/pw: **train / train**
+    * user/password: **train / train**
     * LDAP Server (root: "dc=training,dc=com")
     * SQL Server
     * Apache Directory Studio (LDAP Browser)
@@ -87,7 +87,7 @@ For a comprehensive guide to installing Tableau Server on Linux, refer to [**Ins
 
 ## Update Linux Repositories
 
-**apt-get** is the **Package Manager** for this Linux distibution. The next 3 commands will:
+**apt-get** is the **Package Manager** for this Linux distribution. The next 3 commands will:
 
 * Update the repositories on the machines. This ensures you have access to the latest revision of this distribution  
 
