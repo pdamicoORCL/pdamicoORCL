@@ -16,11 +16,11 @@ Here's a summary of the training:
 
 * Configure LDAP as an Identity Store
 
-* Install Drivers to connect to SQL Server from Linux
-
 * "Lock" the Default Project
 
 * Import LDAP Groups through the Web UI **and** command line
+
+* Install Drivers to connect to SQL Server from Linux
 
 When finished, students will have:
 
@@ -267,7 +267,7 @@ Refer to [**tsm user-identity-store**](https://help.tableau.com/current/server/e
 
       tsm initialize --start-server --request-timeout 1800  
 ```
->***Take a break. This should take at least 12-15 minutes.***  
+***Take a break. This should take at least 12-15 minutes.***  
 
 ## Enable Metadata Services
 
@@ -525,31 +525,31 @@ Reference: [**Tableau Server Help: Permissions**](https://help.tableau.com/curre
 
     * Can you see the **Finance** Project?
 
-    # Install SQL Server Driver (Linux)  
+# Install SQL Server Driver (Linux)  
 
-    SQL Server is installed on **train-vm**. You have to install the SQL Server driver on the Tableau Server.  
+SQL Server is installed on **train-vm**. You have to install the SQL Server driver on the Tableau Server.  
 
-    ## Install UnixOdbc Driver
+## Install UnixOdbc Driver
 
-      At a terminal, enter the following (**node2** is the sudo password):  
+  At a terminal, enter the following (**node2** is the sudo password):  
 
-      `sudo apt install unixodbc`
+  `sudo apt install unixodbc`
 
-    ## Install Tableau SQL Server Driver
+## Install Tableau SQL Server Driver
 
-    * Launch Web Browser (Chromium)  
+* Launch Web Browser (Chromium)  
 
-    * Navigate to [**Driver Download**](https://www.tableau.com/support/drivers). Alternatively, google **tableau driver download** and click on the first link (**Driver Downlad - Tableau**)  
+* Navigate to [**Driver Download**](https://www.tableau.com/support/drivers). Alternatively, google **tableau driver download** and click on the first link (**Driver Downlad - Tableau**)  
 
-    * Scroll to **Microsoft SQL Server**  
+* Scroll to **Microsoft SQL Server**  
 
-    * Follow instructions under **On Debian and Ubuntu Linux distributions:**  
+* Follow instructions under **On Debian and Ubuntu Linux distributions:**  
 
-    * To install the driver, run the following command:  
+* To install the driver, run the following command:  
 
-      `sudo dpkg -i /home/node2/Downloads/msodbcsql17_17.5.1.1-1_amd64.deb`  
+  `sudo dpkg -i /home/node2/Downloads/msodbcsql17_17.5.1.1-1_amd64.deb`  
 
-    * Accept the License terms (Press **\<Tab\>** key to highlight **Yes**; press **Enter**)  
+* Accept the License terms (Press **\<Tab\>** key to highlight **Yes**; press **Enter**)  
 
 # LDAP Browser
 
