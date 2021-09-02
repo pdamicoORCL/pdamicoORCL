@@ -90,8 +90,11 @@ For a comprehensive guide to installing Tableau Server on Linux, refer to [**Ins
 **apt-get** is the **Package Manager** for this Linux distibution. The next 3 commands will:
 
 * Update the repositories on the machines. This ensures you have access to the latest revision of this distribution  
+
 * Upgrade all packages to the latest version  
+
 * Install the package you need to install **.deb** files, which is how Tableau Server is distributed  
+
 
 **sudo** is the command that allows you to run "as root". Enter the following commands. Accept all prompts. **Note:** The "sudo" password is **node2**
 
@@ -103,7 +106,9 @@ sudo apt-get -y install gdebi-core
 
 ## Install and Initialize TSM  
 
-Confirm once again that you are at the Desktop. Your prompt should look like this: `node2@node2-vm:~/Desktop$`
+Confirm once again that you are at the Desktop. Your prompt should look like this:  
+
+`node2@node2-vm:~/Desktop$`
 
 Enter the following in a Terminal window.
 
@@ -115,12 +120,12 @@ Enter the following in a Terminal window.
 
     `sudo /opt/tableau/tableau_server/packages/scripts.20211.21.0320.1853/initialize-tsm --accepteula`  
 
-* exit Terminal (type "exit" or press **Ctrl**-D)  
+* **Exit Terminal**. Type "exit" and press Enter, or press **Ctrl**-D)  
 
 ## Logout, then Login  
 
 
-* Logout completely. Click the menu in the upper-left of the screen, or the "whisker" menu at the bottom. In either case, when you see the menu, locate and click the **Power** icon, then click **Log Out**  
+* **Logout completely**. Click the menu in the upper-left of the screen, or the "whisker" menu at the bottom. In either case, when you see the menu, locate and click the **Power** icon, then click **Log Out**  
 
 * Login (password: **node2**)  
 
