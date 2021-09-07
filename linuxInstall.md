@@ -1,14 +1,11 @@
-<!--
-Linux Install Training - Skytap Environment
--->
+<!--Linux Install Training - Skytap Environment-->
 Author: Phil D'Amico [pdamico@tableau.com](mailto:pdamico@tableau.com)
-
 
 # Summary
 
-This training provides a sandbox for practicing an install of Tableau Server on Linux. This training is delivered in Skytap, with 2 Linux VMs.
+This training provides a sandbox for practicing an install of Tableau Server on Linux. This training is delivered in Skytap, with 3 Linux VMs.
 
-You will install Tableau Server on Linux, configure LDAP Authentication, and implement a basic Content Model, using three pre-defined groups in LDAP.
+You will install Tableau Server on Linux, configure LDAP Authentication, and implement a basic Content Model, using three LDAP Groups.
 
 Here's a summary of the training:
 
@@ -18,13 +15,15 @@ Here's a summary of the training:
 
 * "Lock" the Default Project
 
-* Import LDAP Groups through the Web UI **and** command line
+* Import LDAP Groups through the Web UI **and** command line  
 
-* Install Drivers to connect to SQL Server from Linux
+* Install Drivers to connect to SQL Server from Linux  
 
-When finished, students will have:
+* Add and configure a 2nd Node
 
-* A running Tableau Server with LDAP Identity Store / Local Authentication
+When finished, you will have:
+
+* A running, 2-node Tableau Server cluster with LDAP Identity Store / Local Authentication
 
 * Access to SQL Server: **Superstore World** and **DEV Superstore World**
 
@@ -34,21 +33,26 @@ When finished, students will have:
 
 * Basic understanding of Content Model Best Practices
 
-* A working LDAP Server they can browse
+* A working LDAP Server you can browse
 
 For a comprehensive guide to installing Tableau Server on Linux, refer to [**Install and Configure Tableau Server**](https://help.tableau.com/current/server-linux/en-us/install_config_top.htm).  
 
-# Your Environment (2 Virtual Machines)  
+# Your Environment (3 Machines)  
 
-- Tableau Server (Hostname: **node2**)  
+- Tableau Server node1 (Hostname: **node-1**)  
 
     * XUbuntu Desktop 18.04 LTS, 32GB RAM, 8 Cores, 80GB Disk
-    * user/password: **node2 / node2**
+    * user/password: **node1 / node1**
     * Tableau Server install (.deb) file on Desktop
     * **register.json**: JSON file for Registering Tableau Server via command line
     * **config.ldap.json**: JSON file to configure LDAP Identity Store (see below)
     * Apache Directory Studio (LDAP Browser) configured to connect to LDAP Server (see below)  
 
+- Tableau Server node2 (Hostname: **node-2**)
+
+    * XUbuntu Desktop 18.04 LTS, 32GB RAM, 8 Cores, 80GB Disk
+    * user/password: **node2 / node2**
+    * Tableau Server install (.deb) file on Desktop
 
 - LDAP Server, SQL Server  (Hostname: **train-vm**)  
 
@@ -60,28 +64,27 @@ For a comprehensive guide to installing Tableau Server on Linux, refer to [**Ins
 
 # Launch Environment
 
-* Press Power (Play) button above the two machines  
+* Press Power (Play) button above the machines  
 
-* Click on **Empty Ubuntu Image 30GB** to launch in your browser  
+* Click on **node1** to launch in your browser  
 
 * **Wait**. The VM may not be responsive at first; it can takes up to 2 minutes to load the VM.    
 
 * **Review Toolbar at top of screen**.  *If you don't see the dock at the bottom of the screen, click the **Auto Fit** icon in the Skytap toolbar.*
 
-* Open a Terminal window. There are several ways to do this:  
+* Open a Terminal window. There are two ways to do this:  
 
     - Click the **Terminal** icon on the dock at the bottom of the screen  
     - Right-click the Desktop. Click **Open Terminal Here**  
-    - Press **\<Ctrl\> - \<Alt\> - t**  
 
+* Your prompt should look like this:  
 
-* Enter the following at the prompt:  
+    `node1@node-1:~/Desktop$`  
 
-    `cd /home/node2/Desktop`
+* If it does not, enter the following at the prompt:  
 
-    Your prompt should look like this:  
+    `cd /home/node1/Desktop`
 
-    `node2@node2-vm:~/Desktop$`  
 
 # Prepare the Environment
 
@@ -96,7 +99,7 @@ For a comprehensive guide to installing Tableau Server on Linux, refer to [**Ins
 * Install the package you need to install **.deb** files, which is how Tableau Server is distributed  
 
 
-**sudo** is the command that allows you to run "as root". Enter the following commands. Accept all prompts. **Note:** The "sudo" password is **node2**
+**sudo** is the command that allows you to run "as root". Enter the following commands. Accept all prompts. **Note:** The "sudo" password is **node1**
 
 ```
 sudo apt-get update
@@ -108,28 +111,28 @@ sudo apt-get -y install gdebi-core
 
 * Confirm once again that you are at the Desktop. Your prompt should look like this:  
 
-    `node2@node2-vm:~/Desktop$`
+    `node1@node-1:~/Desktop$`
 
 * If it doesn't look like this, change to the Desktop directory:  
 
-    `cd /home/node2/Desktop`
+    `cd /home/node1/Desktop`
 
-* Install Tableau Server package (1:30). Enter the following in a Terminal window.  
+* Install Tableau Server package (1:30). Enter the following in a Terminal window.  **Note** the ".deb" file may be different than what is listed here. Adjust accordingly.
 
     `sudo gdebi -n tableau-server-2021-1-0_amd64.deb`  
 
-* Initialize TSM (1:00)  
+* Initialize TSM (1:00)  **Note** the file location may be different than what is listed here. Adjust accordingly. The command is displayed at the end of the previous command.
 
-    `sudo /opt/tableau/tableau_server/packages/scripts.20211.21.0320.1853/initialize-tsm --accepteula`  
+    `sudo /opt/tableau/tableau_server/packages/scripts.20212.21.0818.1843/initialize-tsm --accepteula`  
 
-* **Exit Terminal**. Type "exit" and press Enter, or press **Ctrl**-D)  
+* **Exit Terminal**. Type "exit" and press Enter, or press **Ctrl**-D  
 
 ## Logout, then Login  
 
 
 * **Logout completely**. Click the menu in the upper-left of the screen, or the "whisker" menu at the bottom. In either case, when you see the menu, locate and click the **Power** icon, then click **Log Out**  
 
-* **Login** (password: **node2**)  
+* **Login** (password: **node1**)  
 
 ## Activate and Register Tableau Server  
 
@@ -137,17 +140,17 @@ sudo apt-get -y install gdebi-core
 
 - Confirm once again that you are at the Desktop. Your prompt should look like this:  
 
-    `node2@node2-vm:~/Desktop$`
+    `node1@node-1:~/Desktop$`
 
 - If it doesn't look like this, change to the Desktop directory:  
 
-    `cd /home/node2/Desktop`
+    `cd /home/node1/Desktop`
 
 - Activate Tableau Server with the license key supplied by your instructor  
 
     `tsm licenses activate -k <your_license_key>`  
 
-- **Optional**: review the registration JSON file. You use this file instead of entering the commands in a Web GUI. Remember: the goal of this tutorial is to perform an install **entirely** from the command line. Enter the following at the prompt (**cat** is the linux command equivalent to **type** on Windows):  
+- **Optional**: review the registration JSON file. You use this file instead of entering the commands in a Web GUI. Remember: the goal of this tutorial is to perform an install **entirely** from the command line. Enter the following at the prompt (**cat** is the Linux command equivalent to **type** on Windows):  
 
     `cat register.json`
 
@@ -203,7 +206,7 @@ Press **\<space\>** to scroll. Press **q** to exit the command and return to a p
 
 * Import settings
 
-    `tsm settings import -f /home/node2/Desktop/config.ldap.json `
+    `tsm settings import -f /home/node1/Desktop/config.ldap.json `
 
 * Test the configuration: find a User  
 
@@ -531,7 +534,7 @@ SQL Server is installed on **train-vm**. You have to install the SQL Server driv
 
 ## Install UnixOdbc Driver
 
-  At a terminal, enter the following (**node2** is the sudo password):  
+  At a terminal, enter the following (**node1** is the sudo password):  
 
   `sudo apt install unixodbc`
 
@@ -539,7 +542,7 @@ SQL Server is installed on **train-vm**. You have to install the SQL Server driv
 
 * Launch Web Browser (Chromium)  
 
-* Navigate to [**Driver Download**](https://www.tableau.com/support/drivers). Alternatively, google **tableau driver download** and click on the first link (**Driver Downlad - Tableau**)  
+* Navigate to [**Driver Download**](https://www.tableau.com/support/drivers). Alternatively, google **tableau driver download** and click on the first link (**Driver Download - Tableau**)  
 
 * Scroll to **Microsoft SQL Server**  
 
@@ -547,7 +550,7 @@ SQL Server is installed on **train-vm**. You have to install the SQL Server driv
 
 * To install the driver, run the following command:  
 
-  `sudo dpkg -i /home/node2/Downloads/msodbcsql17_17.5.1.1-1_amd64.deb`  
+  `sudo dpkg -i /home/node1/Downloads/msodbcsql17_17.5.1.1-1_amd64.deb`  
 
 * Accept the License terms (Press **\<Tab\>** key to highlight **Yes**; press **Enter**)  
 
@@ -591,16 +594,70 @@ SQL Server is installed on **train-vm**. You have to install the SQL Server driv
     - User: **test**
     - Password: **T@bleau2021!**
 
+<!--Add a node2-->
+
+# Add a Node  
+
+## Create the Bootstrap File  
+
+```
+tsm topology nodes get-bootstrap-file --file /home/node1/Desktop/bootstrap.json  
+```
+
+## Copy Bootstrap file to node-2
+
+```
+rsync /home/node1/Desktop/bootstrap.json node2@node-2:.  
+```
+## Login to node-2
+
+```
+ssh node2@node-2  
+```
+
+## Install Tableau Server on node-2
+
+```
+sudo apt update
+sudo apt upgrade  
+sudo apt -y install gdebi-core  
+sudo gdebi -n /home/node2/Desktop/tableau-server-2021-2-2_amd64.deb
+cd /opt/tableau/tableau_server/packages/scr<tab>
+sudo ./initialize-tsm -b /home/node2/bootstrap.json --accepteula
+
+```
+## Logout from node-2  
+
+## Set topology from terminal on node-1  
+
+```
+tsm topology set-process -n node2 -pr clustercontroller -c 1
+tsm topology set-process -n node2 -pr backgrounder -c 4
+tsm topology set-process -n node2 -pr gateway -c 1
+```
+
+## Apply Changes (10:00)  
+```
+tsm pending-changes apply  
+```
+## Verify
+
+* Launch Web Browser (Chromium)  
+* Navigate to <https://localhost:8850>  
+* User **node1** Password: **node1**  
+
 # References
 
 **Ctrl**-Click or **Cmd**-Click links to open in a new window
 
-* [Get Started with Tableau Server on Linux](https://help.tableau.com/current/server-linux/en-us/get_started_server.htm)
-* [Jump-Start Installation](https://help.tableau.com/current/server-linux/en-us/jumpstart.htm)
-* [Install and Configure Tableau Server](https://help.tableau.com/current/server-linux/en-us/install_config_top.htm)
-* [Driver Download](https://www.tableau.com/support/drivers)
-* [Post Installation Tasks](https://help.tableau.com/current/server-linux/en-us/config_post_install.htm)
-* [tsm-user-identity-store](https://help.tableau.com/current/server/en-us/cli_user-identity_tsm.htm)
+* [Get Started with Tableau Server on Linux](https://help.tableau.com/current/server-linux/en-us/get_started_server.htm)  
+* [Jump-Start Installation](https://help.tableau.com/current/server-linux/en-us/jumpstart.htm)  
+* [Install and Configure Tableau Server](https://help.tableau.com/current/server-linux/en-us/install_config_top.htm)  
+* [Driver Download](https://www.tableau.com/support/drivers)  
+* [Post Installation Tasks](https://help.tableau.com/current/server-linux/en-us/config_post_install.htm)  
+* [tsm-user-identity-store](https://help.tableau.com/current/server/en-us/cli_user-identity_tsm.htm)  
+* [Install and Configure Additional Nodes](https://help.tableau.com/current/server-linux/en-us/install_additional_nodes.htm)  
+* [Tableau Server Processes](https://help.tableau.com/current/server/en-us/processes.htm)  
 
 # Appendix
 
@@ -687,9 +744,11 @@ Here are some rough timings for steps in the training. Note the **Initialize** s
 
 | Description | User / ID | Password |
 |:------|:---:|:------:|
-| Tableau Server Admin<br><br> | admin | admin |
-| *sudo* (root) password<br><br>  | node0 | node0 |
-|  SQL Server admin<br><br> | sa | T@bleau2020|
+| Tableau Server Admin | admin | admin |
+| node1 (hostname: node-1)  | node1 | node1 |
+| node2 (hostname: node-2)  | node2 | node2 |
+| train-vm | train | train |
+|  SQL Server admin | sa | T@bleau2020|
 | SQL Server User<br>This is used when creating a workbook<br><br> | test | T@bleau2021! |
 | LDAP Administrator<br> Used with LDAP Utilities<br> (*ldapsearch*, etc.)<br><br> | cn=admin,dc=training,dc=com  | training |
 
@@ -704,10 +763,10 @@ For your reference, here are the commands you enter via the Terminal
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get -y install gdebi-core
-sudo gdebi -n /home/node2/Desktop/tableau-server-2021-1-0_amd64.deb
+sudo gdebi -n /home/node1/Desktop/tableau-server-2021-1-0_amd64.deb
 sudo /opt/tableau/tableau_server/packages/scripts.20211.21.0320.1853/initialize-tsm --accepteula
 tsm licenses activate -k <license_key>
-tsm register --file /home/node2/Desktop/register.json
+tsm register --file /home/node1/Desktop/register.json
 ```
 ### LDAP Configuration
 
@@ -717,7 +776,7 @@ ldapsearch -h train-vm \
 -w admin -b "dc=training,dc=com"
 cat config.ldap.json
 
-tsm settings import -f /home/node2/Desktop/config.ldap.json
+tsm settings import -f /home/node1/Desktop/config.ldap.json
 tsm user-identity-store verify-user-mappings -v dev01
 tsm user-identity-store verify-group-mappings -v Dev
 tsm pending-changes apply
