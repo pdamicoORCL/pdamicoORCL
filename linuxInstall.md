@@ -667,7 +667,7 @@ What you now know:
 
 	- **History is your friend**. Use the up-arrow to scroll back. Note also that history (the last 1000 commands) is preserved from one session to the next (unlike Windows). It's actually a regular text file that you can query using grep (`~/.bash_history`)  
 
-	- With regards to `~/.bash_history` above, you now know that the `~` sign is shorthand for the user's home directory. You also know that a filename that begins with `.` is a hidden file. It won't show in directory listings (`ls`) unless you ask for it (`ls -a~`)  
+	- With regards to `~/.bash_history` above, you now know that the `~` sign is shorthand for the user's home directory. You also know that a filename that begins with `.` is a hidden file. It won't show in directory listings (`ls`) unless you ask for it (`ls -a`)  
 
 	- Use the TAB key to auto-complete. This is especially helpful if you have to enter a long directory, such as when you ran the `initialize-tsm` command. Note this also works when entering `tsm` commands.  
 
