@@ -5,7 +5,7 @@ Author: Phil D'Amico [pdamico@tableau.com](mailto:pdamico@tableau.com)
 
 This training provides a sandbox for practicing an install of Tableau Server on Linux. This training is delivered in Skytap, with 3 Linux VMs.
 
-You will install Tableau Server on Linux, configure LDAP Authentication, and implement a basic Content Model, using three LDAP Groups.
+You will install Tableau Server on Linux, configure LDAP as the Identity Store, and implement a basic Content Model, using three LDAP Groups.
 
 Here's a summary of the training:
 
@@ -628,7 +628,9 @@ sudo ./initialize-tsm -b /home/node2/bootstrap.json --accepteula
 ```
 ## Logout from node-2  
 
-## Set topology from terminal on node-1  
+Type "exit" and press Enter, or press **Ctrl**-D. You should still be at a terminal, but now you are back in node-1
+
+## Set Topology from terminal on node-1  
 
 ```
 tsm topology set-process -n node2 -pr clustercontroller -c 1
@@ -645,6 +647,37 @@ tsm pending-changes apply
 * Launch Web Browser (Chromium)  
 * Navigate to <https://localhost:8850>  
 * User **node1** Password: **node1**  
+
+# Summary: Lessons Learned
+
+What have you done:
+
+- You performed a complete install of a multi-node Tableau Server on Linux entirely from the command line.
+
+- You practiced implementing security on projects using Groups
+
+
+What you now know:  
+
+- You know what a Linux distribution is, why there are so many of them, and how it's NOT Linux (remember, "Linux" is just the kernel). **Side Note**: Purists don't want you to call it "Linux", but "GNU/Linux".
+
+- You know the difference between an "Identity Store" and "Authentication"
+
+- You learned some techniques to make you more productive at the Linux command line
+
+	- **History is your friend**. Use the up-arrow to scroll back. Note also that history (the last 1000 commands) is preserved from one session to the next (unlike Windows). It's actually a regular text file that you can query using grep (`~/.bash_history`)  
+
+	- With regards to `~/.bash_history` above, you now know that the `~` sign is shorthand for the user's home directory. You also know that a filename that begins with `.` is a hidden file. It won't show in directory listings (`ls`) unless you ask for it (`ls -a~`)  
+
+	- Use the TAB key to auto-complete. This is especially helpful if you have to enter a long directory, such as when you ran the `initialize-tsm` command. Note this also works when entering `tsm` commands.  
+
+	- The `time` command helps you get a sense of each step in the process. It can be put in front of ANY shell command. For example:
+
+		`tsm start`  
+
+		`time tsm start`  
+
+		The only difference is, when it's done, it will print the elapsed time to `stdout` (the terminal)  
 
 # References
 
