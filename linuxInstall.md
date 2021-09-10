@@ -13,7 +13,7 @@ Here's a summary of the training:
 
 * Configure LDAP as an Identity Store
 
-* "Lock" the Default Project
+* "Lock" the Default Project (Best Practice)
 
 * Import LDAP Groups through the Web UI **and** command line  
 
@@ -109,7 +109,7 @@ sudo apt-get -y install gdebi-core
 
 ## Install and Initialize TSM  
 
-* Confirm once again that you are at the Desktop. Your prompt should look like this:  
+* Confirm that you are at the Desktop. Your prompt should look like this:  
 
     `node1@node-1:~/Desktop$`
 
@@ -119,11 +119,11 @@ sudo apt-get -y install gdebi-core
 
 * Install Tableau Server package (1:30). Enter the following in a Terminal window.  **Note** the ".deb" file may be different than what is listed here. Adjust accordingly.
 
-    `sudo gdebi -n tableau-server-2021-1-0_amd64.deb`  
+    `sudo gdebi -n tableau-server-2021-3-0_amd64.deb`  
 
 * Initialize TSM (1:00)  **Note** the file location may be different than what is listed here. Adjust accordingly. The command is displayed at the end of the previous command.
 
-    `sudo /opt/tableau/tableau_server/packages/scripts.20212.21.0818.1843/initialize-tsm --accepteula`  
+    `sudo /opt/tableau/tableau_server/packages/scripts.20213.21.0902.2150/initialize-tsm --accepteula`  
 
 * **Exit Terminal**. Type "exit" and press Enter, or press **Ctrl**-D  
 
@@ -138,7 +138,7 @@ sudo apt-get -y install gdebi-core
 
 - Open Terminal Window  
 
-- Confirm once again that you are at the Desktop. Your prompt should look like this:  
+- Confirm that you are at the Desktop. Your prompt should look like this:  
 
     `node1@node-1:~/Desktop$`
 
@@ -166,7 +166,9 @@ sudo apt-get -y install gdebi-core
 
 Link to Google Slides: [LDAP and Tableau Server: Shared](https://docs.google.com/presentation/d/1cx-90_mRHFWr5HVBXybnoWecAP21MHciMIdf80EYYp8/edit?usp=sharing).  
 
-## Test LDAP Connectivity  
+## Test LDAP Connection
+
+Tableau Server has to be able to connect to your LDAP Server. One way to validate this connection is to use a GNU/Linux utility `ldapsearch`.  
 
 Enter the following in a Terminal window:
 
@@ -212,7 +214,7 @@ Press **\<space\>** to scroll. Press **q** to exit the command and return to a p
 
      `tsm user-identity-store verify-user-mappings -v dev01`
 
-* You should get something like this:
+* You should see this:
 
 ```
       Distinguished Name: uid=Dev01,o=Users,dc=training,dc=com
@@ -228,7 +230,7 @@ Press **\<space\>** to scroll. Press **q** to exit the command and return to a p
 
      `tsm user-identity-store verify-group-mappings -v Dev`
 
-* You should get something like this:
+* You should see this:
 
 ```
       Distinguished Name: cn=Dev,o=Groups,dc=training,dc=com
@@ -240,7 +242,7 @@ Press **\<space\>** to scroll. Press **q** to exit the command and return to a p
 
 ## If you have errors...
 
-Once you initialize Tableau Server (`tsm initialize` command below), you can’t use this JSON file method (`tsm import -f config.ldap.json` in our example) to make changes. You have to use these commands to make individual changes. Alternatively, you can use the tsm user-identity-store commands.
+Once you initialize Tableau Server (`tsm initialize` command below), you can’t use this JSON import method (`tsm import -f config.ldap.json` in our example) to make changes. You have to use these commands to make individual changes. Alternatively, you can use the tsm user-identity-store commands.
 
 Here is a list of common configuration commands if you want to adjust your LDAP Identity Store values after you install Tableau Server.  
 
@@ -598,6 +600,8 @@ SQL Server is installed on **train-vm**. You have to install the SQL Server driv
 
 # Add a Node  
 
+To add a node, you need information about the "initial node". The next command - run from the terminal on the "initial node" - stores this information in a JSON file. You then copy that file to the new node and use it to initialize that node.
+
 ## Create the Bootstrap File  
 
 ```
@@ -617,12 +621,14 @@ ssh node2@node-2
 
 ## Install Tableau Server on node-2
 
+The following commands are identical to the ones you executed to install Tableau Server EXCEPT the last command. The last command takes your JSON file as a parameter so it can be joined to the cluster.  
+
 ```
 sudo apt update
 sudo apt upgrade  
 sudo apt -y install gdebi-core  
-sudo gdebi -n /home/node2/Desktop/tableau-server-2021-2-2_amd64.deb
-cd /opt/tableau/tableau_server/packages/scr<tab>
+sudo gdebi -n /home/node2/Desktop/tableau-server-2021-3-0_amd64.deb
+cd /opt/tableau/tableau_server/packages/scr (press <tab> to auto-complete)
 sudo ./initialize-tsm -b /home/node2/bootstrap.json --accepteula
 
 ```
@@ -659,13 +665,13 @@ What have you done:
 
 What you now know:  
 
-- You know what a Linux distribution is, why there are so many of them, and how it's NOT Linux (remember, "Linux" is just the kernel). **Side Note**: Purists don't want you to call it "Linux", but "GNU/Linux".
+- You know what a Linux distribution is, why there are so many of them, and that it's NOT just Linux (remember, "Linux" is just the kernel). **Side Note**: Purists do not call it "Linux", but "GNU/Linux".
 
 - You know the difference between an "Identity Store" and "Authentication"
 
 - You learned some techniques to make you more productive at the Linux command line
 
-	- **History is your friend**. Use the up-arrow to scroll back. Note also that history (the last 1000 commands) is preserved from one session to the next (unlike Windows). It's actually a regular text file that you can query using grep (`~/.bash_history`)  
+	- **History is your friend**. Use the up-arrow to scroll back. Note also that history (the last 1,000 commands) is preserved from one session to the next (unlike Windows). Command history is stored a regular text file in your home directory, which you can query using grep (`~/.bash_history`)  
 
 	- With regards to `~/.bash_history` above, you now know that the `~` sign is shorthand for the user's home directory. You also know that a filename that begins with `.` is a hidden file. It won't show in directory listings (`ls`) unless you ask for it (`ls -a`)  
 
@@ -678,6 +684,15 @@ What you now know:
 		`time tsm start`  
 
 		The only difference is, when it's done, it will print the elapsed time to `stdout` (the terminal)  
+
+  - You learned to recognize - and enter - a multi-line command. You do this by ending each line with a backslash (`\`). Example:  
+
+    ```
+    ldapsearch -h train-vm \
+    -D "uid=admin,o=Users,dc=training,dc=com" \
+    -w admin -b "dc=training,dc=com"  
+    ```
+
 
 # References
 
@@ -796,8 +811,8 @@ For your reference, here are the commands you enter via the Terminal
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get -y install gdebi-core
-sudo gdebi -n /home/node1/Desktop/tableau-server-2021-1-0_amd64.deb
-sudo /opt/tableau/tableau_server/packages/scripts.20211.21.0320.1853/initialize-tsm --accepteula
+sudo gdebi -n /home/node1/Desktop/tableau-server-2021-3-0_amd64.deb
+sudo /opt/tableau/tableau_server/packages/scripts.20213.21.0902.2150/initialize-tsm --accepteula
 tsm licenses activate -k <license_key>
 tsm register --file /home/node1/Desktop/register.json
 ```
