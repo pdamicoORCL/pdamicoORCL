@@ -658,10 +658,19 @@ tsm pending-changes apply
 
 What have you done:
 
-- You performed a complete install of a multi-node Tableau Server on Linux entirely from the command line.
+- You performed a complete install of Tableau Server on Linux entirely from the command line. This included:  
+
+  - Connecting an LDAP Server as the Identity Store  
+
+  - Importing Groups from your LDAP Server through the Web UI **and** the command line  
+
+  - Installing Drivers to connect to Microsoft SQL Server on Linux  
+
+  - Adding and configuring a 2nd Node  
 
 - You practiced implementing security on projects using Groups
 
+- You used Apache Directory Studio to browse the LDAP Server  
 
 What you now know:  
 
