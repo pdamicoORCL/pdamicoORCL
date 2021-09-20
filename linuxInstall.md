@@ -1,11 +1,9 @@
 <!--Linux Install Training - Skytap Environment-->
-Author: Phil D'Amico [pdamico@tableau.com](mailto:pdamico@tableau.com)
+Author: Phil D'Amico [pdamico@tableau.com](mailto:pdamico@tableau.com)  
 
 # Summary
 
-This training provides a sandbox for practicing an install of Tableau Server on Linux. This training is delivered in Skytap, with 3 Linux VMs.
-
-You will install Tableau Server on Linux, configure LDAP as the Identity Store, and implement a basic Content Model, using three LDAP Groups.
+This training provides a sandbox for practicing an install of Tableau Server on Linux. This training is delivered in Skytap, with 3 Linux VMs. You will install Tableau Server on Linux, configure LDAP as the Identity Store, and implement a basic Content Model, using three LDAP Groups.  
 
 Here's a summary of the training:
 
@@ -70,14 +68,14 @@ For a comprehensive guide to installing Tableau Server on Linux, refer to [**Ins
 
 * **Wait**. The VM may not be responsive at first; it can takes up to 2 minutes to load the VM.    
 
-* **Review Toolbar at top of screen**.  *If you don't see the dock at the bottom of the screen, click the **Auto Fit** icon in the Skytap toolbar.*
+* **Review Toolbar at top of screen**.  *If you don't see the dock at the bottom of the screen, click the **Fit to Window** icon in the Skytap toolbar.*
 
 * Open a Terminal window. There are two ways to do this:  
 
-    - Click the **Terminal** icon on the dock at the bottom of the screen  
+    - Click the **Terminal** icon, either on the Desktop or the Dock at the bottom of the screen  
     - Right-click the Desktop. Click **Open Terminal Here**  
 
-* Your prompt should look like this:  
+* Your prompt should look like this (note that the `~` is shorthand for your home directory):  
 
     `node1@node-1:~/Desktop$`  
 
@@ -85,8 +83,13 @@ For a comprehensive guide to installing Tableau Server on Linux, refer to [**Ins
 
     `cd /home/node1/Desktop`
 
+    or
 
-# Prepare the Environment
+    `cd ~/Desktop`  
+
+* You can also use [command-line completion](https://en.wikipedia.org/wiki/Command-line_completion), which is supported in the bash shell). Enter `cd ~/De` then press \<Tab\>.   
+
+# Prepare node1
 
 ## Update Linux Repositories
 
@@ -101,7 +104,7 @@ For a comprehensive guide to installing Tableau Server on Linux, refer to [**Ins
 
 **sudo** is the command that allows you to run "as root". Enter the following commands. Accept all prompts. **Note:** The "sudo" password is **node1**
 
-```
+```bash
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get -y install gdebi-core
@@ -160,17 +163,9 @@ sudo apt-get -y install gdebi-core
 
 # Configure LDAP
 
-## Optional: Review LDAP Server Presentation
-
-**Ctrl**-Click or **Cmd**-Click links to open the presentation in a new window.
-
-Link to Google Slides: [LDAP and Tableau Server: Shared](https://docs.google.com/presentation/d/1cx-90_mRHFWr5HVBXybnoWecAP21MHciMIdf80EYYp8/edit?usp=sharing).  
-
 ## Test LDAP Connection
 
-Tableau Server has to be able to connect to your LDAP Server. One way to validate this connection is to use a GNU/Linux utility `ldapsearch`.  
-
-Enter the following in a Terminal window:
+Tableau Server has to be able to connect to your LDAP Server. One way to validate this connection is to use a GNU/Linux utility `ldapsearch`.  Enter the following in a Terminal window:  
 
 ```
 ldapsearch -h train-vm \
@@ -189,7 +184,7 @@ ldapsearch -h train-vm \
 |   -b     | Base (where to start searching; in this case at the ROOT entry) |  
 
 
-This will list all the entries in the LDAP directory. You can scroll back through to review. Also, you can repeat the command and "pipe" the output. Press the **Up-Arrow** key to repeat the command, this time piping the output to **more**:  
+This will list all the entries in the LDAP directory. You can scroll back through to review. Also, you can repeat the command and "pipe" the output. Press the **Up-Arrow** key to repeat the command, this time piping the output to **more**. Notice ` | more ` on the last line below; everything else is the same.  
 
 ```
 ldapsearch -h train-vm \
@@ -206,13 +201,19 @@ Press **\<space\>** to scroll. Press **q** to exit the command and return to a p
 
 ## Configure LDAP Identity Store
 
+Now that you've confirmed a connection to your LDAP Server, you are ready to configure the Identity Store. All the settings are stored in `config.ldap.json`.
+
+* Use the `cat` command to review  
+
+    `cat config.ldap.json`
+
 * Import settings
 
     `tsm settings import -f /home/node1/Desktop/config.ldap.json `
 
 * Test the configuration: find a User  
 
-     `tsm user-identity-store verify-user-mappings -v dev01`
+     `tsm user-identity-store verify-user-mappings -v dev01`  
 
 * You should see this:
 
@@ -242,26 +243,36 @@ Press **\<space\>** to scroll. Press **q** to exit the command and return to a p
 
 ## If you have errors...
 
-Once you initialize Tableau Server (`tsm initialize` command below), you can’t use this JSON import method (`tsm import -f config.ldap.json` in our example) to make changes. You have to use these commands to make individual changes. Alternatively, you can use the tsm user-identity-store commands.
+Once you initialize Tableau Server (`tsm initialize` command below), you can’t use this JSON import method (`tsm import -f config.ldap.json` in our example) to make changes. You can either use `tsm user-identity-store` or `tsm configuration` commands. Here's an example:
 
-Here is a list of common configuration commands if you want to adjust your LDAP Identity Store values after you install Tableau Server.  
+```
+node1@node-1:~$ tsm user-identity-store set-user-mappings --displayname "givenName"
+```
 
-The format is `tsm configuration set -k <key> -v <value>`  
+You can also list the setting for Groups or Users:
+
+```
+node1@node-1:~$ tsm user-identity-store get-user-mappings
+User Base Filter: objectClass=inetOrgPerson
+User Name: uid
+User Display Name: givenName
+User Email: mail
+User Certificate:
+User JPEG Photo:
+User Thumbnail:
+User Member of: member
+node1@node-1:~$
+```
+
+The format for `tsm configuration` commands is `tsm configuration set -k <key> -v <value>`  
 
 Example: `tsm configuration set -k wgserver.domain.fqdn -v “train-vm”`
 
-```
-tsm configuration set –k wgserver.domain.ldap.bind –v simple
-tsm configuration set -k wgserver.domain.ldap.group.baseDn -v "o=Groups,dc=training,dc=com"
-tsm configuration set -k wgserver.domain.ldap.group.baseFilter -v "objectClass=groupofNames"
-tsm configuration set -k wgserver.domain.ldap.hostname -v “training.us”
-tsm configuration set -k wgserver.domain.ldap.user.baseDn -v  "o=Users,dc=training,dc=com"
-tsm configuration set -k wgserver.domain.ldap.user.baseFilter -v "objectClass=inetOrgPerson"
-tsm configuration set -k wgserver.domain.password -v “admin”
-tsm configuration set -k wgserver.domain.username -v “cn=admin,dc=training,dc=com”
-```
+## tsm References
 
-Refer to [**tsm user-identity-store**](https://help.tableau.com/current/server/en-us/cli_user-identity_tsm.htm) for a complete list  
+- [tsm user-identity-store](https://help.tableau.com/current/server-linux/en-us/cli_user-identity_tsm.htm )  
+- [tsm configuration](https://help.tableau.com/current/server-linux/en-us/cli_configuration_tsm.htm)
+
 
 # Finish Installation
 
@@ -272,7 +283,7 @@ Refer to [**tsm user-identity-store**](https://help.tableau.com/current/server/e
 
       tsm initialize --start-server --request-timeout 1800  
 ```
-***Take a break. This should take at least 12-15 minutes.***  
+**Take a break. This should take at least 12-15 minutes.***
 
 ## Enable Metadata Services
 
@@ -291,7 +302,7 @@ Refer to [**tsm user-identity-store**](https://help.tableau.com/current/server/e
 ## Initial login  
 
 * Launch Web Browser (Chromium)  
-* Navigate to <http://localhost>  
+* There should be a **Server** button on the Bookmark Bar. If not, Navigate to <http://localhost>  
 * User **admin** Password: **admin**  
 
 
@@ -628,7 +639,7 @@ sudo apt update
 sudo apt upgrade  
 sudo apt -y install gdebi-core  
 sudo gdebi -n /home/node2/Desktop/tableau-server-2021-3-0_amd64.deb
-cd /opt/tableau/tableau_server/packages/scr (press <tab> to auto-complete)
+cd /opt/tableau/tableau_server/packages/scr (press <tab> for command line completion)
 sudo ./initialize-tsm -b /home/node2/bootstrap.json --accepteula
 
 ```
@@ -651,7 +662,8 @@ tsm pending-changes apply
 ## Verify
 
 * Launch Web Browser (Chromium)  
-* Navigate to <https://localhost:8850>  
+* There should be a **TSM node1/node1** button on the Bookmark Bar. If not, navigate to <https://localhost:8850>  
+* Click **Advanced**, then **Proceed to localhost** to dismiss the security warning  
 * User **node1** Password: **node1**  
 
 # Summary: Lessons Learned
@@ -674,9 +686,13 @@ What have you done:
 
 What you now know:  
 
-- You know what a Linux distribution is, why there are so many of them, and that it's NOT just Linux (remember, "Linux" is just the kernel). **Side Note**: Purists do not call it "Linux", but "GNU/Linux".
+- You know what a Linux distribution is, and that it's NOT just Linux (remember, "Linux" is only the kernel). **Side Note**: Purists do not call it "Linux", but "GNU/Linux".
 
-- You know the difference between an "Identity Store" and "Authentication"
+- If you reviewed the **LDAP and Tableau Server** presentation:  
+
+   - You know the difference between an "Identity Store" and "Authentication", and you can - at a minimum - start a conversation about Authentication options.  
+
+   - You know the steps to configure LDAP with Tableau Server, and you can translate that to other Authentication scenarios  
 
 - You learned some techniques to make you more productive at the Linux command line
 
@@ -684,7 +700,7 @@ What you now know:
 
 	- With regards to `~/.bash_history` above, you now know that the `~` sign is shorthand for the user's home directory. You also know that a filename that begins with `.` is a hidden file. It won't show in directory listings (`ls`) unless you ask for it (`ls -a`)  
 
-	- Use the TAB key to auto-complete. This is especially helpful if you have to enter a long directory, such as when you ran the `initialize-tsm` command. Note this also works when entering `tsm` commands.  
+	- The bash shell supports [command-line completion](https://en.wikipedia.org/wiki/Command-line_completion) with the \<Tab\>. This is especially helpful if you have to enter a long directory, such as when you ran the `initialize-tsm` command. Note this also works when entering `tsm` commands.  
 
 	- The `time` command helps you get a sense of each step in the process. It can be put in front of ANY shell command. For example:
 
@@ -715,23 +731,27 @@ What you now know:
 * [tsm-user-identity-store](https://help.tableau.com/current/server/en-us/cli_user-identity_tsm.htm)  
 * [Install and Configure Additional Nodes](https://help.tableau.com/current/server-linux/en-us/install_additional_nodes.htm)  
 * [Tableau Server Processes](https://help.tableau.com/current/server/en-us/processes.htm)  
+* [Command-line completion - wikipedia](https://en.wikipedia.org/wiki/Command-line_completion)
 
 # Appendix
 
-## Timings / Planning the Training
 
-Here are some rough timings for steps in the training. Note the **Initialize** step can take up to 15 minutes.
+## Passwords
 
-- Install .deb file. **1:30**
-- Activate License. **:25**
-- Register. **1:10**
-- Apply pending changes. **:34**
-- Initialize. **14:00**. One option is to present Content Model Best Practices during this time.
-- Enable Metadata Services **2:30**
+| Description | User / ID | Password |
+|:------|:---:|:------:|
+| Tableau Server Admin | admin | admin |
+| node1 (hostname: node-1)  | node1 | node1 |
+| node2 (hostname: node-2)  | node2 | node2 |
+| train-vm | train | train |
+|  SQL Server admin | sa | T@bleau2020|
+| SQL Server User<br>This is used when creating a workbook<br><br> | test | T@bleau2021! |
+| LDAP Administrator<br> Used with LDAP Utilities<br> (*ldapsearch*, etc.)<br><br> | cn=admin,dc=training,dc=com  | training |
+
 
 ## Registration JSON File  
 
-```
+```json
 {
   "zip" : "98103",
   "country" : "United States",
@@ -752,7 +772,7 @@ Here are some rough timings for steps in the training. Note the **Initialize** s
 
 ## LDAP Identity Store JSON File  
 
-```
+```json
 {
     "configEntities": {
         "identityStore": {
@@ -797,19 +817,6 @@ Here are some rough timings for steps in the training. Note the **Initialize** s
 }
 ```
 
-## Passwords
-
-| Description | User / ID | Password |
-|:------|:---:|:------:|
-| Tableau Server Admin | admin | admin |
-| node1 (hostname: node-1)  | node1 | node1 |
-| node2 (hostname: node-2)  | node2 | node2 |
-| train-vm | train | train |
-|  SQL Server admin | sa | T@bleau2020|
-| SQL Server User<br>This is used when creating a workbook<br><br> | test | T@bleau2021! |
-| LDAP Administrator<br> Used with LDAP Utilities<br> (*ldapsearch*, etc.)<br><br> | cn=admin,dc=training,dc=com  | training |
-
-
 ## Terminal Commands  
 
 For your reference, here are the commands you enter via the Terminal
@@ -831,6 +838,7 @@ tsm register --file /home/node1/Desktop/register.json
 ldapsearch -h train-vm \
 -D "uid=admin,o=Users,dc=training,dc=com" \
 -w admin -b "dc=training,dc=com"
+
 cat config.ldap.json
 
 tsm settings import -f /home/node1/Desktop/config.ldap.json
@@ -875,9 +883,11 @@ tabcmd syncgroup Sales -r Creator
 ```
 ssh train@train-vm
 sqlcmd -U test -S train-vm -P T@bleau2021! -d 'Superstore World'
-USE [Superstore World]
+```
 
+### Reset Passwords  
 
+```
 sqlcmd -U sa -S train-vm -P T@bleau2020 -d 'Superstore World'
 ALTER LOGIN test WITH PASSWORD ='T@bleau2021!'
 ALTER LOGIN test WITH CHECK_EXPIRATION=off
